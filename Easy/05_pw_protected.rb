@@ -41,7 +41,7 @@ class Login
 		if @username != nil && @password != nil
 			password_file = File.open('psswd.txt', 'w+')
 			@profile = {@username => @password}
-			password_file.puts(@profile)
+			password_file.puts("#{@profile.key(@password)}\n#{@profile[@username]}")
 		end
 	end
 
