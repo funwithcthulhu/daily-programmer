@@ -1,8 +1,11 @@
 # Creates a 'spiral ascension' matrix
 # when initialized with a number
 class Spiral
-  attr_accessor :matrix
+  attr_reader :matrix
   def initialize(number)
+    @location = 'top'
+    @row = 0
+    @col = 0
     @num = number
     @matrix = []
     @num.times { @matrix << [] }
@@ -21,46 +24,55 @@ class Spiral
   private
 
   def create
-    # t=top, r=right, b=bottom, etc.
-    location = 'top'
-    row = 0
-    col = 0
-    while @storage_array.empty?
-      if location == 'top'
-        if @matrix[row][col] == 'x'
-          @matrix[row][col] = @storage_array.pop
-          col += 1 unless !@matrix[row].include?('x')
-        else
-          location = 'right'
-          row += 1
-        end
-      elsif location == 'right'
-        if @matrix[row][col] == 'x'
-          @matrix[row][col] = @storage_array.pop
-          row += 1 unless row >= @matrix.length-1
-        else
-          location = 'bottom'
-          row = col
-          col -= 1
-        end
-      elsif location == 'bottom'
-        if @matrix[row][col] == 'x'
-          @matrix[row][col] = @storage_array.pop
-          col -= 1 unless !@matrix[row].include?('x')
-        else
-          location = 'left'
-          row -= 1
-        end
-      elsif location == 'left'
-        if @matrix[row][col] == 'x'
-          @matrix[row][col] = @storage_array.pop
-          row -= 1
-        else
-          location = 'top'
-          row += 1
-          col = row
-        end
+    until @storage_array.empty?
+      case @location
+      when 'top' then location_top
+      when 'right' then location_right
+      when 'bottom' then location_bottom
+      when 'left' then location_left
       end
+    end
+  end
+
+  def location_top
+    if @matrix[@row][@col] == 'x'
+      @matrix[@row][@col] = @storage_array.pop
+      @col += 1 if @matrix[@row].include?('x')
+    else
+      @location = 'right'
+      @row += 1
+    end
+  end
+
+  def location_right
+    if @matrix[@row][@col] == 'x'
+      @matrix[@row][@col] = @storage_array.pop
+      @row += 1 unless @row >= @matrix.length - 1
+    else
+      @location = 'bottom'
+      @row = @col
+      @col -= 1
+    end
+  end
+
+  def location_bottom
+    if @matrix[@row][@col] == 'x'
+      @matrix[@row][@col] = @storage_array.pop
+      @col -= 1 if @matrix[@row].include?('x')
+    else
+      @location = 'left'
+      @row -= 1
+    end
+  end
+
+  def location_left
+    if @matrix[@row][@col] == 'x'
+      @matrix[@row][@col] = @storage_array.pop
+      @row -= 1
+    else
+      @location = 'top'
+      @row += 1
+      @col = @row
     end
   end
 end

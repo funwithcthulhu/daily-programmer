@@ -1,14 +1,12 @@
 class Login
-  
 	attr_accessor :username
 	attr_accessor :password
 	attr_accessor :temp
 	attr_accessor :key
 	attr_accessor :profile
 	attr_accessor :event
-
 	def initialize
-		usr 
+	  usr 
   end
 
 	def usr
@@ -21,22 +19,22 @@ class Login
 			pw
 		else
 			puts 'Invalid login'
-			usr  
-		end 
+			usr
+		end
 		@temp = ''
-	end 
+	end
 
-	def pw  
+	def pw
 		puts "please choose a password (allowed characters include: a-z, 0-9, '!@#$%^&*()')"
 		print "> "
-		@temp = gets.chomp 
+		@temp = gets.chomp
 		if valid? @temp
 			@password = encode @temp
 			@temp = ''
 		else
 			puts 'Invalid password'
-			pw 
-		end 
+			pw
+		end
 		@temp = ''
 		if @username != nil && @password != nil
 			password_file = File.open('psswd.txt', 'w+')
@@ -45,23 +43,23 @@ class Login
 		end
 	end
 
-	def login 
+	def login
 		puts "Please enter your username"
 		print "> "
-		@event = gets.chomp 
+		@event = gets.chomp
 		exit if @event == ''
 		if @event == decode(@username)
 			puts "please enter your password"
 			print "> "
 			@event = gets.chomp
-			if @event == decode(@password) 
+			if @event == decode(@password)
 				puts '######################'
 				puts ""
 				puts "Validated"
 				puts ""
 				puts ""
 				my_file = File.open("secret-file.txt", "a+")
-				loop do 
+				loop do
 					puts "Please enter command"
 					puts "Type help for options"
 					print "> "
@@ -73,7 +71,7 @@ class Login
 						puts "write (write secret file)"
 						puts "esc to terminate"
 						puts ""
-					end 
+					end
 					if temp.downcase.include? 'read'
 						my_file = File.open("secret-file.txt", "a+")
 						puts '######################'
@@ -86,53 +84,45 @@ class Login
 						puts ""
 						puts "Press enter to submit\n"
 						print "> "
-						input = gets.chomp.to_s 
+						input = gets.chomp.to_s
 						File.open("secret-file.txt", "a+") do |file|
 							file<< ("\n" + input)
 						end
-					end 
+					end
 					break if temp.downcase.include? 'esc'
 				end
 				my_file.close
-			else 	
+			else
 				puts "Invalid password"
 				puts "Session Terminated"
 				exit
-			end 		
-		else 
+			end
+		else
 			puts "Invalid username"
-			login 
+			login
 		end
-	end					
+	end
 
 	private
 
 	def valid? str
 		valid_characters = ('A'..'Z').to_a + ('a'..'z').to_a + ('0'..'9').to_a + ['!','@','#','$','%','^','&','*','(',')']
 		str.chars.all? { |c| valid_characters.include? c }
-	end 
+	end
 
-	def encode str 
+	def encode str
 		keys
-		#str = str.to_s.split('').map {|char| char.ord + @key}.map(&:chr).join('')
 		str = str.to_s.split('').map(&:ord).map{|s| s += @key }.map(&:chr).join('')
 	end
 
-	def decode str 
-		#str = str.to_s.split('').map {|char| char.ord - @key}.map(&:chr).join('')
+	def decode str
 		str = str.to_s.split('').map(&:ord).map{|s| s -= @key}.map(&:chr).join('')
 	end
 
 	def keys
-		#@key = rand(51..123)
 		@key = 50
 	end
 end
 
 event = Login.new
-event.login 
-
-
-
-
- 
+event.login
