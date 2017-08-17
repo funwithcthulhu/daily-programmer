@@ -1,11 +1,11 @@
-example = """O G
+example = '''O G
 B O R O Y
 O R B G R
 B O G O Y 
 Y G B Y G 
-R O R B R"""
+R O R B R'''
 
-challenge = """R O Y P O
+challenge = '''R O Y P O
 R R B R R R B P Y G P B B B G P B P P R
 B G Y P R P Y Y O R Y P P Y Y R R R P P
 B P G R O P Y G R Y Y G P O R Y P B O O
@@ -25,52 +25,71 @@ O Y P G R P R G P O B B R B O B Y Y B P
 B Y Y P O Y O Y O R B R G G Y G R G Y G
 Y B Y Y G B R R O B O P P O B O R R R P
 P O O O P Y G G Y P O G P O B G P R P B
-R B B R R R R B B B Y O B G P G G O O Y"""
+R B B R R R R B B B Y O B G P G G O O Y'''
 
-class Maze 
-  attr_reader :maze
-  attr_reader :key
+# Transforms the color-maze string into a nested array when an instance of class is created.
+# The 'solve' method solves the maze from top to bottom according to the key. 'Print' re-writes
+# the maze replacing letters not on the solve-path with '/', and 'display' prints the maze
+# to the screen.
+class Maze
   def initialize(input)
-    @maze = input.split("\n").map {|str| str.delete(" ")}.map do |str|
+    @maze = input.split("\n").map { |str| str.delete(' ') }.map do |str|
       str.split('')
     end
     @key = @maze.shift
-    p @key
-    p @maze
+    @seq = []
+    @row = 0
+    @col = 0
   end
 
   def solve
-    seq = []
-    row = 0
-    col = 0
     size = @maze.size - 1
-    while row < size
-      temp = @maze[row][col]
-      temp1 = @maze[row+1][col]
-      temp2 = @maze[row][col-1]
-      temp3 = @maze[row][col+1]
-      if @key.include?(temp)
-        p temp2
-        if row <= size && (@key.include?(temp1) || @key.include?(temp2) || @key.include?(temp3))
-          seq << [row, col] if row >= 0 && col >= 0
-          p seq
-          p temp2
-          if @key.include?(temp1)
-            row += 1
-          elsif @key.include?(temp2)
-            col -= 1 unless col.zero?
-          elsif @key.include?(temp3)
-            col += 1
-          end
-        else 
-          col += 1
+    while @row < size
+      @temp = @maze[@row][@col]
+      @temp1 = @maze[@row + 1][@col]
+      @temp2 = @maze[@row][@col - 1]
+      @temp3 = @maze[@row][@col + 1]
+      @temp4 = @maze[@row - 1][@col]
+      if @key.include?(@temp)
+        if @key.include?(@temp1)
+          @seq << [@row, @col]
+          @row += 1
+        elsif @key.include?(@temp2) && !@seq.include?([@row, @col])
+          @seq << [@row, @col]
+          @col -= 1 unless @col.zero?
+        elsif @key.include?(@temp3)
+          @seq << [@row, @col]
+          @col += 1
+        elsif !@key.include?(@temp1) && !@key.include?(@temp2) && !@key.include?(@temp3) && @row != 0
+          @maze[@row][@col] = '/'
+          @row -= 1 unless @maze[@row - 1][@col] == nil 
+        else
+          @seq.clear
+          @col += 1
         end
       else
-        col += 1 unless @maze[row][col+1] == nil
-      end 
+        @col += 1 unless @maze[@row][@col + 1] == nil 
+      end
     end
-    seq << [row, col]
-    p seq
+    @seq << [@row, @col]
+  end
+
+  def display
+    field = @maze.flatten.map { |i| i.to_s.size }.max
+    @maze.each do |row|
+      puts row.map { |i| ' ' * (field - i.to_s.size) + i.to_s }.join('  ')
+    end
+  end
+
+  def print
+    @maze.each_with_index do |row, row_index|
+      row.each_with_index do |_col, col_index|
+        if @seq.include?([row_index, col_index])
+          @maze[row_index][col_index]
+        else
+          @maze[row_index][col_index] = '/'
+        end
+      end
+    end
   end
 end
-
