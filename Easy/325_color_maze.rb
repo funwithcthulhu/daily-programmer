@@ -27,9 +27,11 @@ Y B Y Y G B R R O B O P P O B O R R R P
 P O O O P Y G G Y P O G P O B G P R P B
 R B B R R R R B B B Y O B G P G G O O Y'''
 
-# Transforms the color-maze string into a nested array when an instance of class is created.
-# The 'solve' method solves the maze from top to bottom according to the key. 'Print' re-writes
-# the maze replacing letters not on the solve-path with '/', and 'display' prints the maze
+# Transforms the color-maze string into a nested array
+# when an instance of Maze is created. The 'solve' method
+# solves the maze from top to bottom according to the key.
+# 'Path' re-writes the maze replacing letters not on
+# the solve-path with '/', and 'display' prints the maze
 # to the screen.
 class Maze
   def initialize(input)
@@ -37,59 +39,75 @@ class Maze
       str.split('')
     end
     @key = @maze.shift
-    @seq = []
+    @path_seq = []
     @row = 0
     @col = 0
   end
 
-  def solve
-    size = @maze.size - 1
-    while @row < size
-      @temp = @maze[@row][@col]
-      @temp1 = @maze[@row + 1][@col]
-      @temp2 = @maze[@row][@col - 1]
-      @temp3 = @maze[@row][@col + 1]
-      @temp4 = @maze[@row - 1][@col]
-      if @key.include?(@temp)
-        if @key.include?(@temp1)
-          @seq << [@row, @col]
-          @row += 1
-        elsif @key.include?(@temp2) && !@seq.include?([@row, @col])
-          @seq << [@row, @col]
-          @col -= 1 unless @col.zero?
-        elsif @key.include?(@temp3)
-          @seq << [@row, @col]
-          @col += 1
-        elsif !@key.include?(@temp1) && !@key.include?(@temp2) && !@key.include?(@temp3) && @row != 0
-          @maze[@row][@col] = '/'
-          @row -= 1 unless @maze[@row - 1][@col] == nil 
-        else
-          @seq.clear
-          @col += 1
-        end
-      else
-        @col += 1 unless @maze[@row][@col + 1] == nil 
-      end
-    end
-    @seq << [@row, @col]
-  end
-
   def display
-    field = @maze.flatten.map { |i| i.to_s.size }.max
-    @maze.each do |row|
-      puts row.map { |i| ' ' * (field - i.to_s.size) + i.to_s }.join('  ')
-    end
+    @maze.each { |row| puts row.join(' ') }
   end
 
-  def print
+  def path
     @maze.each_with_index do |row, row_index|
-      row.each_with_index do |_col, col_index|
-        if @seq.include?([row_index, col_index])
+      row.each_index do |col_index|
+        if @path_seq.include?([row_index, col_index])
           @maze[row_index][col_index]
         else
           @maze[row_index][col_index] = '/'
         end
       end
     end
+  end
+
+  def solve
+    while @row < @maze.size - 1
+      @temp1 = @maze[@row + 1][@col]
+      @temp2 = @maze[@row][@col - 1]
+      @temp3 = @maze[@row][@col + 1]
+      @key.include?(@maze[@row][@col]) ? find_seq : @col += 1 
+    end
+    @path_seq << [@row, @col]
+  end
+
+  private
+
+  def find_seq
+    if @key.include?(@temp1)
+      down
+    elsif @key.include?(@temp2) && !@path_seq.include?([@row, @col])
+      left
+    elsif @key.include?(@temp3)
+      right
+    elsif !@key.include?(@temp1) && !@key.include?(@temp2) && !@key.include?(@temp3) && !@row.zero?
+      backtrack
+    else
+      seq_clear
+    end
+  end
+
+  def seq_clear
+    @path_seq.clear
+    @col += 1
+  end
+
+  def down
+    @path_seq << [@row, @col]
+    @row += 1
+  end
+
+  def right
+    @path_seq << [@row, @col]
+    @col += 1
+  end
+
+  def left
+    @path_seq << [@row, @col]
+    @col -= 1 unless @col.zero?
+  end
+
+  def backtrack
+    @maze[@row][@col] = '/'
+    @row -= 1 unless @maze[@row - 1][@col].nil?
   end
 end
