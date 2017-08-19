@@ -1,24 +1,15 @@
 # G37 1337
 class Translator
-  attr_reader :array
-  def initialize(string)
-    @string = string
+  def self.leeterize(string)
+    string.upcase.gsub(/[ABEILMNOSTVW]/, DICT)
   end
 
-  def leeterize
-    @string.upcase.gsub(/[ABEILMNOSTVW]/, DICT)
-  end
-
-  def englishize
-    @string = @string.sub(/[(\\)]/, 'N')
-    @array = @string.chars.map do |val|
-      if DICT.values.include?(val.upcase) 
-        DICT.key(val)
-      else 
-        val 
-      end
+  def self.englishize(string)
+    string.gsub!('(\\)', 'N')
+    array = string.upcase.chars.map do |val|
+      DICT.value?(val) ? DICT.key(val) : val
     end
-    puts @array.join('').capitalize
+    array.join('').downcase.capitalize
   end
 
   DICT =
@@ -38,4 +29,8 @@ class Translator
     }.freeze
 end
 
-puts Translator.new('3Y3 (\)33d j00 t0 g37 d4 d0c70r.').englishize
+puts Translator.leeterize('I am elite.')
+puts Translator.leeterize('Da pain!')
+puts Translator.leeterize('Eye need help!')
+puts Translator.englishize('3Y3 (\)33d j00 t0 g37 d4 d0c70r.')
+puts Translator.englishize('| n33d m4 p1llz!')
