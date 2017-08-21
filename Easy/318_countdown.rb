@@ -1,39 +1,31 @@
 def countdown(string)
+  final = []
+  ans = []
+  str_array = []
   num_array = string.split(' ').map(&:to_i)
   target = num_array.pop
-  size = num_array.size
-  operators = [:+, :-, :/, :*]
-  perm_array = num_array.permutation(size).to_a
-  op_array = operators.repeated_permutation(size-1).to_a
-  $str_array = []
-  ans = []
+  perm_array = num_array.permutation(num_array.size).to_a
+  op_array = %i[+ - / *].repeated_permutation(num_array.size - 1).to_a
   perms = perm_array.dup
-  while perms.length > 0
+  until perms.empty?
     l = 0
-    p_temp = perms[l]
     ops = op_array.dup
-    while ops.length > 0
+    until ops.empty?
       i = 0
-      op_temp = ops[i]
-      $str_array.push(perms[l]+op_temp)
+      str_array.push(perms[l] + ops[i])
       ops.delete(ops[i])
       i += 1
     end
     perms.delete(perms[l])
     l += 1
   end
-  $str_array.map! { |array| array.join(' ') }
-  $str_array.each do |string|
-    puts string if RPNCalculator.new.evaluate(string) == target
-    ans.push(string) if RPNCalculator.new.evaluate(string) == target
+  str_array.map { |array| array.join(' ') }.each do |string|
+    if RPNCalculator.new.evaluate(string) == target
+      ans.push(RPNCalculator.new.tokens(string))
+    end
   end
-  working = []
-  ans.each do |string|
-    working.push(RPNCalculator.new.tokens(string))
-  end
-  final = []
-  working.each do |array|
-    a1 = array.select { |num| num.is_a? Integer}
+  ans.each do |array|
+    a1 = array.select { |num| num.is_a? Integer }
     a2 = array.select { |val| val.is_a? Symbol }
     final.push(a1.zip(a2))
   end
@@ -42,6 +34,7 @@ def countdown(string)
   end
 end
 
+# calculator object for adding left to right
 class RPNCalculator
   attr_accessor :stack
   def initialize(stack = [])
@@ -49,62 +42,45 @@ class RPNCalculator
   end
 
   def plus
-    if @stack.count < 2
-      raise "calculator is empty"
-    else
-      last = @stack.shift
-      second_to_last = @stack.shift
-      added = last + second_to_last
-      @stack.unshift added
-    end
+    raise 'calculator is empty' if @stack.count < 2
+    first = @stack.shift
+    second = @stack.shift
+    added = first + second
+    @stack.unshift(added)
   end
 
   def minus
-    if @stack.count < 2
-      raise "calculator is empty"
-    else
-      last = @stack.shift
-      second_to_last = @stack.shift
-      subtracted = last - second_to_last
-      @stack.unshift subtracted
-    end
+    raise 'calculator is empty' if @stack.count < 2
+    first = @stack.shift
+    second = @stack.shift
+    subtracted = first - second
+    @stack.unshift(subtracted)
   end
 
   def divide
-    if @stack.count < 2
-      raise "calculator is empty"
-    else
-      last = @stack.shift
-      second_to_last = @stack.shift
-      divided =  last.to_f / second_to_last.to_f
-      @stack.unshift divided
-    end
+    raise 'calculator is empty' if @stack.count < 2
+    first = @stack.shift
+    second = @stack.shift
+    divided = first.to_f / second.to_f
+    @stack.unshift(divided)
   end
 
   def times
-    if @stack.count < 2
-      raise "calculator is empty"
-    else
-      last = @stack.shift
-      second_to_last = @stack.shift
-      multiplied = last.to_f * second_to_last.to_f
-      @stack.unshift multiplied
-    end
+    raise 'calculator is empty' if @stack.count < 2
+    first = @stack.shift
+    second = @stack.shift
+    multiplied = first.to_f * second.to_f
+    @stack.unshift(multiplied)
   end
 
   def tokens(string)
     string.split(' ').each do |value|
-      case
-      when value == "*"
-        @stack.push(:*)
-      when value == "/"
-        @stack.push(:/)
-      when value == "+"
-        @stack.push(:+)
-      when value == "-"
-        @stack.push(:-)
-      else
-        @stack.push value.to_i
+      case value
+      when '*' then @stack.push(:*)
+      when '/' then @stack.push(:/)
+      when '+' then @stack.push(:+)
+      when '-' then @stack.push(:-)
+      else @stack.push(value.to_i)
       end
     end
     @stack
@@ -113,26 +89,21 @@ class RPNCalculator
   def evaluate(string)
     @stack = []
     string.split(' ').each do |value|
-      case
-      when value == "*"
-        times
-      when value == "/"
-        divide
-      when value == "+"
-        plus
-      when value == "-"
-        minus
-      else
-        @stack.push value.to_i
+      case value
+      when '*' then times
+      when '/' then divide
+      when '+' then plus
+      when '-' then minus
+      else @stack.push(value.to_i)
       end
     end
-    (string.include? '/') ? (@stack.join.to_f) : (@stack.join.to_i)
+    string.include?('/') ? @stack.join.to_f : @stack.join.to_i
   end
 end
 
-#example
+# example
 countdown('1 3 7 6 8 3 250')
 
-#challenges
+# challenges
 countdown('25 100 9 7 3 7 881')
 countdown('6 75 3 25 50 100 952')
