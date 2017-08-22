@@ -1,4 +1,6 @@
-# Checks if initialized matrix is a Latin Square
+# Checks if initialized matrix is a Latin Square,
+# if matrix is a Latin Square, reduces the matrix
+# if possible, and displays it to the screen
 class Latin
   def initialize
     @dups = []
@@ -10,12 +12,27 @@ class Latin
     @numbers = gets.chomp
     build_matrix
     latin_square?
+    output
+  end
+
+  def output
+    if latin_square?
+      puts "\nMatrix is a Latin Square. Reducing now..."
+      puts ''
+      @matrix.sort_by! { |row| row[0] }
+      display
+      puts "\nLatin Square Reduced"
+    else
+      puts "\nMatrix is not a Latin Square"
+    end
   end
 
   def latin_square?
     check_row
     check_col
-    puts @dups.empty? ? true : false
+    check_include
+    check_count
+    @dups.empty? ? true : false
   end
 
   def display
@@ -26,8 +43,8 @@ class Latin
   end
 
   def check_row
-    @matrix.each do |col|
-      @dups = col.select { |num| col.count(num) > 1 }
+    @matrix.each do |row|
+      @dups = row.select { |num| row.count(num) > 1 }
     end
   end
 
@@ -37,9 +54,18 @@ class Latin
     end
   end
 
-  def reorder
-    @matrix.sort_by! { |row| row[0] }
-    display
+  def check_include
+    @matrix.each do |row|
+      row.each do |int|
+        @dups.push(1) if !@matrix[0].include?(int)
+      end
+    end
+  end
+
+  def check_count
+    @matrix.each do |row|
+      @dups.push(1) if row.count != @matrix[0].count
+    end
   end
 
   private
@@ -53,4 +79,3 @@ class Latin
     end
   end
 end
-
