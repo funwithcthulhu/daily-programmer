@@ -18,14 +18,10 @@ class Latin
     puts @dups.empty? ? true : false
   end
 
-  private
-
-  def build_matrix
-    @matrix = @numbers.split(' ').map!(&:to_i)
-    rows = @matrix.length / @length
-    rows.times do
-      temp = @matrix.slice!(0...@length)
-      @matrix << temp
+  def display
+    field = @matrix.flatten.map { |i| i.to_s.size }.max
+    @matrix.each do |row|
+      puts row.map { |i| ' ' * (field - i.to_s.size) + i.to_s }.join('  ')
     end
   end
 
@@ -40,4 +36,21 @@ class Latin
       @dups = col.select { |num| col.count(num) > 1 }
     end
   end
+
+  def reorder
+    @matrix.sort_by! { |row| row[0] }
+    display
+  end
+
+  private
+
+  def build_matrix
+    @matrix = @numbers.split(' ').map!(&:to_i)
+    rows = @matrix.length / @length
+    rows.times do
+      temp = @matrix.slice!(0...@length)
+      @matrix << temp
+    end
+  end
 end
+
