@@ -7,7 +7,7 @@ def slide(input)
     pyramid << line
   end
   pyramid.map! { |string| string.split(' ').map!(&:to_i) }
-  layers = pyramid.shift.join.to_i
+  layers = pyramid.shift.shift
 
   # sums each item of the pyramid with the lower of the two items
   # below it, then returns the first (final sum) item of the
@@ -18,5 +18,5 @@ def slide(input)
     end
   end
   puts Time.now - start
-  pyramid.first.join.to_i
+  pyramid.shift.shift
 end
