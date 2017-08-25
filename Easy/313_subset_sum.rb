@@ -1,0 +1,1 @@
+def ssum(arr); arr.any? { |b| arr.any? { |x| (b+x).zero? }}; end
