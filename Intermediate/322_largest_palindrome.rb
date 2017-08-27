@@ -25,4 +25,5 @@ Benchmark.bm do |x|
   x.report('pal(9): ') { pal(9) }
   x.report('pal(10): ') { pal(10) }
   x.report('pal(11): ') { pal(11) }
+  x.report('pal(12): ') { pal(12) }
 end
