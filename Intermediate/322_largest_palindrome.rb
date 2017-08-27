@@ -1,21 +1,28 @@
-def palindrome num
-  num.to_s == num.to_s.reverse ? true : false
+require 'benchmark'
+
+def pal(n)
+  fin = ('1' + '0' * (n - 1)).to_i
+  start = half = fin * 10
+  highest = 0
+  while highest.zero?
+    half -= 1
+    full = (half.to_s + half.to_s.reverse).to_i
+    (start - 1).downto(fin) do |i|
+      break if full / i >= start
+      highest = full if (full % i).zero?
+    end
+  end
+  puts highest
 end
 
-def largest(n)
-  start = Time.now
-  case n.to_i
-  when 2 then array = (10..99).to_a
-  when 3 then array = (100..999).to_a
-  when 4 then array = (1000..9999).to_a
-  when 5 then array = (10000..99999).to_a
-  when 6 then array = (100000..999999).to_a
-  when 7 then array = (1000000..9999999).to_a
-  when 8 then array = (10000000..99999999).to_a
-  when 9 then array = (100000000..999999999).to_a
-  end
-  products = [0]
-  array.reverse.each {|a| array.reverse.each { |b| products.push(a*b) if palindrome(a*b) && a*b > products.sort.last}}
-  puts Time.now - start
-  products.sort.last 
+Benchmark.bm do |x|
+  x.report('pal(3): ') { pal(3) }
+  x.report('pal(4): ') { pal(4) }
+  x.report('pal(5): ') { pal(5) }
+  x.report('pal(6): ') { pal(6) }
+  x.report('pal(7): ') { pal(7) }
+  x.report('pal(8): ') { pal(8) }
+  x.report('pal(9): ') { pal(9) }
+  x.report('pal(10): ') { pal(10) }
+  x.report('pal(11): ') { pal(11) }
 end
