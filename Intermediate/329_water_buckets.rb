@@ -3,7 +3,7 @@ class BucketRiddle
   attr_reader :path, :buckets
 
   # Create an array "@buckets" which simulates two buckets,
-  # @buckets[0] is the first bucket, and @bucket[1] is 
+  # @buckets[0] is the first bucket, and @bucket[1] is
   # the second bucket.
   def initialize(m, n, l)
     @buckets = [0, 0]
@@ -14,7 +14,7 @@ class BucketRiddle
     coprimes?
   end
 
-  # Checks if m or n is larger and calls the corresponding 
+  # Checks if m or n is larger and calls the corresponding
   # solve method "right_hand_solve" or "left_hand_solve".
   # If the final path is larger than 10 steps, returns
   # only the first and last three steps of the path.
@@ -35,8 +35,6 @@ class BucketRiddle
   def coprimes?
     nse = NoSolutionError.new('Input numbers must be coprimes')
     raise nse unless @first.gcd(@second) == 1
-    raise nse unless @first.gcd(@target) == 1
-    raise nse unless @second.gcd(@target) == 1
   end
 
   # Finds the solution by filling the larger right bucket,
@@ -50,30 +48,36 @@ class BucketRiddle
     until @buckets[1] == @target
       fill_right
       until @buckets[1].zero?
-        right_to_left; break if @buckets.include?(@target)
-        empty_left; break if @buckets.include?(@target)
-        right_to_left; break if @buckets.include?(@target)
+        right_to_left
+        break if @buckets.include?(@target)
+        empty_left
+        break if @buckets.include?(@target)
+        right_to_left
+        break if @buckets.include?(@target)
       end
     end
   end
 
-  # Does the same thing as 'right_hand_solve' except in the 
+  # Does the same thing as 'right_hand_solve' except in the
   # opposite direction--filling the larger left bucket and
   # transferring "water" to the right.
   def left_hand_solve
     until @buckets[0] == @target
       fill_left
       until @buckets[0].zero?
-        left_to_right; break if @buckets.include?(@target)
-        empty_right; break if @buckets.include?(@target)
-        left_to_right; break if @buckets.include?(@target)
+        left_to_right
+        break if @buckets.include?(@target)
+        empty_right
+        break if @buckets.include?(@target)
+        left_to_right
+        break if @buckets.include?(@target)
       end
     end
   end
 
   # Moves the "water" from the left "bucket" (@buckets[0])
-  # to the right "bucket" (@buckets[1]). If there is more 
-  # water in the right "bucket" than will fit, fills the 
+  # to the right "bucket" (@buckets[1]). If there is more
+  # water in the right "bucket" than will fit, fills the
   # bucket, and keeps the remainder in the left "bucket".
   def left_to_right
     @buckets[1] = @buckets[1] + @buckets[0]
