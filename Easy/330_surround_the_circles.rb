@@ -23,9 +23,9 @@ class Square
   private
 
   def circles
+    puts "Enter 'x,y,radius', then hit return"
+    puts 'Press return on empty line to finish'
     loop do
-      puts "Enter 'x,y,radius', then hit return"
-      puts 'Press return on empty line to finish'
       print '> '
       @input = gets.chomp
       break if @input == ''
