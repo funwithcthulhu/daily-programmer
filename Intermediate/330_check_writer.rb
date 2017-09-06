@@ -7,19 +7,19 @@ module FloatConverter
     first = (first - dec_place) / 100
     first = convert(first)
     second = convert(dec_place)
-    (first + ' dollars' + ' and' + ' ' + second + ' cents').capitalize
+    second = 'zero' if second == ''
+    (first + ' dollars' + ' and ' + second + ' cents').capitalize
   end
 
   def convert(int)
-    check = ''
-    return 'zero' if int.zero?
+    return '' if int.zero?
     DICT.each do |i, words|
-      return check + words.to_s if int.to_s.length == 1 && int / i > 0
+      return words.to_s if int.to_s.length == 1 && int / i > 0
       if int < 100 && int / i > 0
-        return check + words.to_s if (int % i).zero?
-        return check + "#{words} " + (int % i).write_check
+        return words.to_s if (int % i).zero?
+        return "#{words}-" + (int % i).write_check
       elsif int / i > 0
-        return check + (int / i).write_check + " #{words} " + (int % i).write_check
+        return (int / i).write_check + " #{words} " + (int % i).write_check
       end
     end
   end
@@ -80,5 +80,3 @@ class Integer
   include FloatConverter
   include IntConverter
 end
-
-99_999_999_999_999.99.write_check
