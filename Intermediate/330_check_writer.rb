@@ -1,12 +1,11 @@
+require 'bigdecimal'
 # Main converter methods for Float class
 module FloatConverter
   def write_check
-    num = self
-    first = (num * 100).round
-    dec_place = first % 100
-    first = (first - dec_place) / 100
+    first = self.to_i
+    dec_place = self.to_s.split('.').last.to_i
     first = convert(first)
-    second = convert(dec_place)
+    second = convert(dec_place.to_i)
     second = 'zero' if second == ''
     (first + ' dollars' + ' and ' + second + ' cents').capitalize
   end
@@ -26,6 +25,7 @@ module FloatConverter
 
   DICT =
     {
+      1_000_000_000_000_000_000 => 'quintillion',
       1_000_000_000_000_000 => 'quadrillion',
       1_000_000_000_000 => 'trillion',
       1_000_000_000 => 'billion',
