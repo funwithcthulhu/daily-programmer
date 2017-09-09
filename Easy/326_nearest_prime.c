@@ -17,7 +17,7 @@ int main(void)
 	scanf("%lld", &number);
 	
 	if (isPrime(number)) {
-		printf("%lld\n", number);
+		printf("%lld is prime.\n", number);
 	}
 	long long lower = number;
 	long long higher = number;
@@ -36,6 +36,8 @@ int main(void)
 	end = clock();
 	cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
 	printf("Timer: %lld finished in %f s\n", number, cpu_time_used);
+
+	return 0;
 }
 
 bool isPrime(int n)
