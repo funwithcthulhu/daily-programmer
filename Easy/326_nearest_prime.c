@@ -11,16 +11,16 @@ int main(void)
 	double cpu_time_used;
 	start = clock();
 	
-	long long number;
+	long number;
 	
 	printf("Enter input number: ");
-	scanf("%lld", &number);
+	scanf("%ld", &number);
 	
 	if (isPrime(number)) {
-		printf("%lld is prime.\n", number);
+		printf("%ld is prime.\n", number);
 	}
-	long long lower = number;
-	long long higher = number;
+	long lower = number;
+	long higher = number;
 
 	while (!isPrime(lower)) {
 		lower -= 1;
@@ -30,12 +30,12 @@ int main(void)
 	}
 	
 	if (isPrime(number) == false) {
-		printf("%lld < %lld < %lld\n", lower, number, higher);
+		printf("%ld < %ld < %ld\n", lower, number, higher);
 	}
 
 	end = clock();
 	cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-	printf("Timer: %lld finished in %f s\n", number, cpu_time_used);
+	printf("Timer: %ld finished in %f s\n", number, cpu_time_used);
 
 	return 0;
 }
