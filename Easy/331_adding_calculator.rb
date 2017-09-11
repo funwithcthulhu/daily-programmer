@@ -27,7 +27,6 @@ class AddingCalculator
     when '-' then puts subtract(@a, @b)
     when '^' then puts exponent(@a, @b)
     end
-    @input = ''
   end
 
   def multiply(a, b)
@@ -66,27 +65,21 @@ class AddingCalculator
     negative = false
     return 0 if a.zero? && b.zero?
     return a if b.zero?
-    if a.zero?
-      return "-#{b}".to_i if b > 0
-      return b.abs if b < 0
-    end
-    if a < 0 && b > 0
-      return "-#{a.abs + b}".to_i
-    elsif a < 0 && b < 0
+    return "-#{b}".to_i if b > 0 && a.zero?
+    return b.abs if b < 0 && a.zero?
+    return "-#{a.abs + b}".to_i if a < 0 && b > 0
+    if a < 0 && b < 0
       a = a.abs
       b = b.abs
       negative = true
-    elsif a > 0 && b < 0
-      return a + b.abs
     end
+    return a + b.abs if a > 0 && b < 0
     count = 0
-    temp = b
-    until temp == a
-      temp += 1
+    until b == a
+      b += 1
       count += 1
     end
-    count = "-#{count}".to_i if negative
-    count
+    negative ? count = "-#{count}".to_i : count
   end
 
   def divide(a, b)
