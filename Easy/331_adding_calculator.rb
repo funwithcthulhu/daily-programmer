@@ -1,7 +1,12 @@
+# dailyprogrammer 331: adding calculator. Requires rubinius 3.84
 class AddingCalculator
   def initialize
     input_loop
   end
+
+  private
+
+  NEG_VAL = Fixnum::MIN + 4_611_686_018_427_387_902
 
   def input_loop
     loop do
@@ -29,76 +34,49 @@ class AddingCalculator
     end
   end
 
+  def make_neg(a)
+    multiply(a, NEG_VAL)
+  end
+
+  def subtract(a, b)
+    c = make_neg(b)
+    a + c
+  end
+
   def multiply(a, b)
-    working_a = a
-    working_b = b
-    neg = false
-    working_b = b.abs if b < 0
-    working_a = a.abs if a < 0
-    neg = true if a > 0 && b < 0
-    neg = true if b > 0 && a < 0
     c = 0
-    working_b.times { c += working_a }
-    neg ? "-#{c}".to_i : c
+    if a < 0 && b > 0
+      b.times { c += a }
+    elsif b < 0 && a > 0
+      a.times { c += b }
+    else
+      a.abs.times { c += b.abs }
+    end
+    c
   end
 
   def exponent(a, b)
     return 'Non-integral answer' if b < 0
-    return 0 if a.zero? unless b.zero?
-    neg = false
-    if a < 0
-      neg = true
-      a = a.abs
-    end
     count = 0
     c = 1
     until count == b
       c = multiply(a, c)
       count += 1
     end
-    neg ? "-#{c}".to_i : c
-  end
-
-  def subtract(a, b)
-    negative = false
-    return "-#{b}".to_i if b > 0 && a.zero?
-    return b.abs if b < 0 && a.zero?
-    return "-#{a.abs + b}".to_i if a < 0 && b > 0
-    return a + b.abs if a > 0 && b < 0
-    if a < 0 && b < 0
-      a = a.abs
-      b = b.abs
-      negative = true
-    end
-    count = 0
-    until b == a
-      b += 1
-      count += 1
-    end
-    negative ? count = "-#{count}".to_i : count
+    c
   end
 
   def divide(a, b)
-    temp_a = a
-    negative = false
     return 'Not-defined' if b.zero?
-    if temp_a < 0 && b < 0
-      temp_a = temp_a.abs
-      b = b.abs
-    elsif temp_a < 0 && b > 0
-      negative = true
-      temp_a = temp_a.abs
-    elsif b < 0 && temp_a > 0
-      negative = true
-      b = b.abs
-    end
+    negative = true if a ^ b < 0
+    a, b = a.abs, b.abs
     count = 0
     c = 0
-    until c >= temp_a
+    until c >= a
       c += b
       count += 1
     end
-    count = "-#{count}".to_i if negative
-    c == temp_a ? count : 'Non-integral answer'
+    count = make_neg(count) if negative
+    c == a ? count : 'Non-integral answer'
   end
 end
