@@ -43,10 +43,8 @@ class AddingCalculator
   end
 
   def exponent(a, b)
-    return 1 if b.zero?
-    return 'Not-defined' if a.zero? && b < 0
-    return 0 if a.zero?
     return 'Non-integral answer' if b < 0
+    return 0 if a.zero? unless b.zero?
     neg = false
     if a < 0
       neg = true
@@ -63,17 +61,15 @@ class AddingCalculator
 
   def subtract(a, b)
     negative = false
-    return 0 if a.zero? && b.zero?
-    return a if b.zero?
     return "-#{b}".to_i if b > 0 && a.zero?
     return b.abs if b < 0 && a.zero?
     return "-#{a.abs + b}".to_i if a < 0 && b > 0
+    return a + b.abs if a > 0 && b < 0
     if a < 0 && b < 0
       a = a.abs
       b = b.abs
       negative = true
     end
-    return a + b.abs if a > 0 && b < 0
     count = 0
     until b == a
       b += 1
@@ -86,9 +82,6 @@ class AddingCalculator
     temp_a = a
     negative = false
     return 'Not-defined' if b.zero?
-    return 0 if temp_a.zero?
-    return 1 if temp_a == b
-    return temp_a if b == 1
     if temp_a < 0 && b < 0
       temp_a = temp_a.abs
       b = b.abs
@@ -99,7 +92,6 @@ class AddingCalculator
       negative = true
       b = b.abs
     end
-    return 'Non-integral answer' if temp_a < b
     count = 0
     c = 0
     until c >= temp_a
