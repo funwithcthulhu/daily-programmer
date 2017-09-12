@@ -1,31 +1,30 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
+#include <limits.h>
 
 int make_neg(int a);
-int subtract(int a, int b);
+void subtract(int a, int b);
 int multiply(int a, int b);
-int exponent(int a, int b);
-int divide(int a, int b);
+void exponent(int a, int b);
+void divide(int a, int b);
 
 int main(void)
 {
     int a;
     int b;
     char operator;
-    //scanf("%i %c %i", &a, &operator, &b);
     while (scanf("%i %c %i", &a, &operator, &b) == 3) {
         if (operator == '/') {
-            printf("%i\n", divide(a, b));
+            divide(a, b);
         }
         if (operator == '*') {
             printf("%i\n", multiply(a, b));
         }
         if (operator == '^') {
-            printf("%i\n", exponent(a, b));
+            exponent(a, b);
         }
         if (operator == '-') {
-            printf("%i\n", subtract(a, b));
+            subtract(a, b);
         }
         if (operator == '+') {
             printf("%i\n", a + b);
@@ -35,13 +34,14 @@ int main(void)
 
 int make_neg(int a)
 {
-    return -a;
+    int min = INT_MIN + 2147483647;
+    return multiply(a, min);
 }
 
-int subtract(int a, int b)
+void subtract(int a, int b)
 {
     int c = make_neg(b);
-    return a + c;
+    printf("%i\n", a + c);
 }
 
 int multiply(int a, int b)
@@ -65,11 +65,10 @@ int multiply(int a, int b)
     return c;
 }
 
-int exponent(int a, int b)
+void exponent(int a, int b)
 {
     if (b < 0) {
         printf("Non-integral answer\n");
-        return 0;
     }
     int count = 0;
     int c = 1;
@@ -77,18 +76,19 @@ int exponent(int a, int b)
         c = multiply(a, c);
         count++;
     }
-    return c;
+    if (b >= 0) {
+        printf("%i\n", c);
+    }
 }
 
-int divide(int a, int b)
+void divide(int a, int b)
 {
-    bool negative = false;
+    int negative = 1;
     if (b == 0) {
         printf("Not-defined\n");
-        return 0;
     }
     if ((a < 0 && b > 0) || (a > 0 && b < 0)) {
-        negative = true;
+        negative = 0;
     }
     a = abs(a);
     b = abs(b);
@@ -98,13 +98,12 @@ int divide(int a, int b)
         c += b;
         count++;
     }
-    if (negative) {
+    if (negative == 0) {
         count = make_neg(count);
     }
-    if (c == a) {
-        return count;
-    } else {
+    if (c == a && b != 0) {
+        printf("%i\n", count);
+    } else if (c != a) {
         printf("Non-integral answer\n");
-        return 0;
     }
 }
