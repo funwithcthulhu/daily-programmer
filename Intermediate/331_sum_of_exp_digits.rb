@@ -10,6 +10,10 @@ def power(n, exponent)
   prod
 end
 
+power(2, 1234).to_s.split(//).map(&:to_i).inject(:+) 
+power(11, 4000).to_s.split(//).map(&:to_i).inject(:+)
+power(50, 3000).to_s.split(//).map(&:to_i).inject(:+) 
+
 #puts power(n, exponent).to_s.split(//).map(&:to_i).inject(:+)
 
 Benchmark.bm do |x|
