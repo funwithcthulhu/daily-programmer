@@ -1,0 +1,1 @@
+CFLAGS=-ggdb3 -O0 -Wall -std=c11 -Werror -Wshadow
