@@ -1,4 +1,3 @@
-require 'bigdecimal'
 # Main converter methods for Float class
 module FloatConverter
   def write_check
