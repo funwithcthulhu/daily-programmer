@@ -1,27 +1,29 @@
 
 storage = {}
-# DATA.each_line do |packet|
-$stdin.each_line do |packet|
+nums = {}
+
+DATA.each_line do |packet|
+#$stdin.each_line do |packet|
   splitter = ->(idx) { packet.split(' ')[idx] }
 
   message_id = splitter[0]
   packet_id = splitter[1]
   packet_total = splitter[2]
 
-  storage[message_id] = [packet_total.to_i] unless storage.key?(message_id)
-  storage[message_id].push([packet_id.to_i, packet])
+  storage[message_id] = [] unless storage.key?(message_id)
+  nums[message_id] = packet_total.to_i unless nums.key?(message_id)
+  storage[message_id] << [packet_id.to_i, packet]
 
-  next unless storage[message_id].size - 1 == storage[message_id][0]
-  puts '' # ensures output begins on a new line
-  (0..storage[message_id][0]).each do |i|
-    storage[message_id][1..-1].each do |j|
-      puts j[1] if i == j[0]
-    end
+  next unless storage[message_id].size == nums[message_id]
+
+  storage.each_value.each { |packets| packets.sort! }
+  storage[message_id].each do |packet|
+    puts packet[1]
   end
+  storage.delete(message_id)
 end
 
 __END__
-
 6220    1   10  Because he's the hero Gotham deserves, 
 6220    9   10   
 5181    5   7   in time, like tears in rain. Time to die.
@@ -104,5 +106,3 @@ __END__
 6450    4   11  venal and virulent vermin vanguarding vice and vouchsafing the violently vicious 
 6450    0   11  Voilà! In view, a humble vaudevillian veteran, cast vicariously as both victim 
 9949    5   10  Because he's not a hero. 
-
-
