@@ -8,14 +8,13 @@ DATA.each_line do |packet|
   message_id = parser[0]
   packet_id = parser[1]
   packet_total = parser[2]
-
+  
   totals[message_id] ||= packet_total.to_i
   storage[message_id] ||= []
-  storage[message_id] << [packet_id.to_i, packet]
+  storage[message_id][packet_id.to_i] = packet
 
-  next unless storage[message_id].size == totals[message_id]
-  storage.each_value.map(&:sort!)
-  storage[message_id].each { |msg| puts msg[1] }
+  next unless storage[message_id].compact.size == totals[message_id]
+  storage[message_id].each { |msg| puts msg }
 end
 
 __END__
