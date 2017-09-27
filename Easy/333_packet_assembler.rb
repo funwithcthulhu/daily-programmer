@@ -4,21 +4,18 @@ totals = {}
 
 # $stdin.each_line do |packet|
 DATA.each_line do |packet|
-  splitter = ->(idx) { packet.split(' ')[idx] }
+  parser = ->(idx) { packet.split(' ')[idx] }
+  message_id = parser[0]
+  packet_id = parser[1]
+  packet_total = parser[2]
 
-  message_id = splitter[0]
-  packet_id = splitter[1]
-  packet_total = splitter[2]
-
-  storage[message_id] = [] unless storage.key?(message_id)
-  totals[message_id] = packet_total.to_i unless totals.key?(message_id)
+  totals[message_id] ||= packet_total.to_i
+  storage[message_id] ||= []
   storage[message_id] << [packet_id.to_i, packet]
 
   next unless storage[message_id].size == totals[message_id]
-
-  storage.each_value.each(&:sort!)
+  storage.each_value.map(&:sort!)
   storage[message_id].each { |msg| puts msg[1] }
-  storage.delete(message_id)
 end
 
 __END__
