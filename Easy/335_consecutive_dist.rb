@@ -9,17 +9,17 @@
 # Your task is to find and display the consecutive distance rating of a number
 # of integer sequences.
 
-def consecutive(array)
+def consecutive(array, gap = 1)
   idx = 0
   sum = []
   while idx < array.length
     temp = array[idx]
     (idx..array.size).each do |i|
-      sum << i - idx if array[i] == temp + 1 || array[i] == temp - 1
+      sum << i - idx if array[i] == temp + gap || array[i] == temp - gap
     end
     idx += 1
   end
-  sum.inject(:+)
+  sum.inject(0, :+)
 end
 
 DATA.each_line do |line|
