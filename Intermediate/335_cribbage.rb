@@ -89,8 +89,8 @@ class Cribbage
   end
 
   def pairs?
-    @cards.each do |card|
-      case @cards.count(card)
+    @runs.each do |card|
+      case @runs.count(card)
       when 2 then @score += 1
       when 3 then @score += 2
       when 4 then @score += 3
