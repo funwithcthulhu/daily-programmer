@@ -1,5 +1,6 @@
 # program for scoring a cribbage hand 2H,2C,3S,4D,9S
 # 2H,2C,3S,4D,4S
+# 2C,2H,3H,4H,5C 
 class Cribbage
   DICT =
     {
@@ -61,10 +62,11 @@ class Cribbage
 
   def runs?
     d = ->(n) { @runs.combination(n).to_a.select { |arr| three?(arr) }.size }
+    f = ->(n) { @runs.combination(n).to_a.select { |arr| four?(arr) }.size }
     if five?
       @score += 5
     elsif four?
-      @score += (d[4] * 4)
+      @score += (f[4] * 4)
     elsif three?
       @score += (d[3] * 3)
     end
