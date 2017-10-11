@@ -1,4 +1,5 @@
-# program for scoring a cribbage hand
+# program for scoring a cribbage hand 2H,2C,3S,4D,9S
+# 2H,2C,3S,4D,4S
 class Cribbage
   DICT =
     {
@@ -35,6 +36,7 @@ class Cribbage
     @raw = @input.gsub(/[AJQKDSCH]/, DICT).delete(',').split(' ')
     @suits = [@raw[1], @raw[3], @raw[5], @raw[7], @raw[9]]
     @cards = [@raw[0], @raw[2], @raw[4], @raw[6], @raw[8]].map(&:to_i)
+    @runs = @input.gsub(/[AJQKDSCH]/, RUN).split(',').map(&:to_i)
   end
 
   def score
@@ -49,7 +51,7 @@ class Cribbage
 
   def fifteen?
     z = 1
-    while z < 6
+    while z < 5
       @cards.combination(z).to_a.each do |arr|
         @score += 2 if arr.inject(:+) == 15
       end
@@ -58,38 +60,37 @@ class Cribbage
   end
 
   def runs?
-    @runs = @input.gsub(/[AJQKDSCH]/, RUN).split(',').map(&:to_i)
-    if five_run?
+    d = ->(n) { @runs.combination(n).to_a.select { |arr| three?(arr) }.size }
+    if five?
       @score += 5
-    elsif four_run?
-      @score += 4
-    elsif three_run?
-      @score += 3
+    elsif four?
+      @score += (d[4] * 4)
+    elsif three?
+      @score += (d[3] * 3)
     end
   end
 
-  def three_run?
-    @runs.sort.each_cons(3).any? do |a, b, c|
+  def three?(arr = @runs)
+    arr.sort.each_cons(3).any? do |a, b, c|
       c == a + 2 && b == a + 1
     end
   end
 
-  def four_run?
-    @runs.sort.each_cons(4).any? do |a, b, c, d|
+  def four?(arr = @runs)
+    arr.sort.each_cons(4).any? do |a, b, c, d|
       c == a + 2 && b == a + 1 && d == a + 3
     end
   end
 
-  def five_run?
-    @runs.sort.each_cons(5).any? do |a, b, c, d, e|
+  def five?(arr = @runs)
+    arr.sort.each_cons(5).any? do |a, b, c, d, e|
       c == a + 2 && b == a + 1 && d == a + 3 && e == a + 4
     end
   end
 
   def pairs?
-    pairs = @input.split(',')
-    pairs.each do |card|
-      case pairs.count(card)
+    @cards.each do |card|
+      case @cards.count(card)
       when 2 then @score += 1
       when 3 then @score += 2
       when 4 then @score += 3
