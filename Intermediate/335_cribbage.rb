@@ -61,14 +61,15 @@ class Cribbage
   end
 
   def runs?
-    d = ->(n) { @runs.combination(n).to_a.select { |arr| three?(arr) }.size }
-    f = ->(n) { @runs.combination(n).to_a.select { |arr| four?(arr) }.size }
+    d = ->(n) { @runs.combination(n).to_a }
+    t = ->(n) { d[n].select { |arr| three?(arr) }.size }
+    f = ->(n) { d[n].select { |arr| four?(arr) }.size }
     if five?
       @score += 5
     elsif four?
       @score += (f[4] * 4)
     elsif three?
-      @score += (d[3] * 3)
+      @score += (t[3] * 3)
     end
   end
 
