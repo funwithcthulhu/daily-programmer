@@ -4,17 +4,29 @@
 #                 10 15 
 #
 # Output: 4 2
+# below breaks current code. TODO: make fix
+# 3 3 3 2 2 2 1 1 1
+# 4
 
 def cannibalize(array, sz)
   array = array.sort.reverse
   cannibals = []
   array.each { |v| cannibals << v if v >= sz }
   cannibals.size.times { array.shift }
+  storage = []
   until array.empty?
-    candidate = array.shift
+    if !storage.empty? && storage.first > array.first
+      candidate = storage.shift
+    else
+      candidate = array.shift
+    end
     until array.empty? || candidate >= sz
-      array.pop
-      candidate += 1
+      #temp = array.pop
+      temp = array.shift
+      candidate += 1 if candidate != temp
+      if candidate == temp
+        storage << temp
+      end
       cannibals << candidate if candidate >= sz
     end
   end
@@ -36,3 +48,5 @@ def input_loop
     end
   end
 end
+
+input_loop
