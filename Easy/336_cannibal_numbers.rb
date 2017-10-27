@@ -13,20 +13,11 @@ def cannibalize(array, sz)
   cannibals = []
   array.each { |v| cannibals << v if v >= sz }
   cannibals.size.times { array.shift }
-  storage = []
   until array.empty?
-    if !storage.empty? && storage.first > array.first
-      candidate = storage.shift
-    else
-      candidate = array.shift
-    end
+    candidate = array.shift
     until array.empty? || candidate >= sz
-      #temp = array.pop
-      temp = array.shift
+      temp = array.pop
       candidate += 1 if candidate != temp
-      if candidate == temp
-        storage << temp
-      end
       cannibals << candidate if candidate >= sz
     end
   end
