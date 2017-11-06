@@ -7,7 +7,7 @@ File.open(ARGV[0]).each_line do |line|
     tname = line.match(/([A-Z]+[a-zA-Z]* [A-Z]+[a-zA-Z]*)/)[0]
     cache[tname] ||= []
   end
-  if line.match('::EXT::') && line =~ /[1-9]/
+  if line =~ /::EXT::SAL/
     sal = line.scan(/[1-9]/).join.to_i
     cache[tname] << sal
   end
