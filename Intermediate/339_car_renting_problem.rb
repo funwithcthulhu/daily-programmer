@@ -41,14 +41,19 @@ module RentalRequests
   end
 
   def self.parse
-    combined = @sdays.zip(@ldays).sort_by { |arr| arr[1] }
-    comparator = 0
-    @requests = combined.select do |arr|
-      arr if arr[0] > comparator && (comparator = arr[1])
+    requests = @sdays.zip(@ldays).sort_by { |arr| arr[1] }
+    last = 0
+    requests.select! do |arr|
+      arr if arr[0] > last && (last = arr[1])
     end
-    puts "Maximum requests: #{@requests.count}"
-    puts "Requests: #{@requests}"
+    puts "Maximum requests: #{requests.count}"
+    puts "Requests: #{requests}"
   end
 end
 
 RentalRequests.take_input
+
+def test
+  a = [12,2,3,4,5]
+  a.select! { |a| a.even? }
+end
