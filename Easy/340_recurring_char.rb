@@ -25,10 +25,11 @@
 
 def recurs_first(string)
   cache = Hash.new(0)
-  string.split(//).each do |l|
+  arr = string.chars
+  arr.each do |l|
     cache[l] += 1
     if cache[l] > 1
-      puts "#{l} index: #{string.split(//).index(l)}"
+      puts "#{l} index: #{arr.index(l)}"
       break
     end
   end
@@ -40,10 +41,11 @@ end
 # 1 index: 2
 
 def first_char(string)
-  l = string.split(//).select do |x|
-    string.split(//).count(x) > 1
+  arr = string.chars
+  l = arr.select do |x|
+    arr.count(x) > 1
   end.first
-  puts "#{l} index: #{string.split(//).index(l)}"
+  puts "#{l} index: #{arr.index(l)}"
 end
 
 # B index: 1
