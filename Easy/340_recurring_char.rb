@@ -23,7 +23,7 @@
 # Return the index (0 or 1 based, but please specify) where the
 # original character is found in the string.
 
-def recurring(string)
+def recurs_first(string)
   cache = Hash.new(0)
   string.split(//).each do |l|
     cache[l] += 1
@@ -34,7 +34,19 @@ def recurring(string)
   end
 end
 
-example = 'ABCDEBC'
-challenge1 = 'IKEUNFUVFV'
-challenge2 = 'PXLJOUDJVZGQHLBHGXIW'
-challenge3 = '*l1J?)yn%R[}9~1"=k7]9;0[$'
+# B index: 1
+# U index: 3
+# J index: 3
+# 1 index: 2
+
+def first_char(string)
+  l = string.split(//).select do |x|
+    string.split(//).count(x) > 1
+  end.first
+  puts "#{l} index: #{string.split(//).index(l)}"
+end
+
+# B index: 1
+# U index: 3
+# X index: 1
+# 1 index: 2
