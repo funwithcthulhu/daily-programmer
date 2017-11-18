@@ -4,7 +4,7 @@
 
 # Description
 
-# Most of us are familiar with web spiders and crawlers
+# Most of us are familiar with web spiders and crawlers 
 # (https://en.wikipedia.org/wiki/Web_crawler) like
 # GoogleBot - they visit a web page, index content there, and
 # then visit outgoing links from that page. Crawlers are an interesting
@@ -48,7 +48,7 @@ require 'open-uri'
 require 'set'
 
 class Spider
-  attr_reader :url, :next, :step, :end
+  attr_reader :url, :next, :step, :end, :images
 
   def initialize(start_url, depth)
     @visited = Set.new
@@ -56,6 +56,7 @@ class Spider
     @next = Set.new
     @step = 0
     @end = depth
+    @images = []
     crawl
   end
 
@@ -63,9 +64,11 @@ class Spider
     until @step == @end
       @url.each do |url|
         unless @visited.include?(url)
-          Page.new(url).all.each do |site|
+          page = Page.new(url)
+          page.all.each do |site|
             @next << site
           end
+          @images << page.images if page.images
         end
         @visited.add(url)
       end
@@ -85,13 +88,13 @@ class Spider
 end
 
 class Page
-  attr_reader :doc, :all
+  attr_reader :doc, :all, :images
 
   def initialize(url)
     @doc = if url =~ /reddit/
              Nokogiri::HTML(open(url, 'User-Agent' => 'FunWithCthulhu'))
            else
-             Nokogiri::HTML(open(url))
+             @doc = Nokogiri::HTML(open(url))
            end
     @all = []
     scripts
@@ -116,11 +119,15 @@ class Page
     @all << @scripts
   end
 
-  def images
-    @imgs = []
+  def imgs
+    @images = []
     @doc.xpath('//img/@src').each do |i|
-      @imgs << 'http:' + i
+      if i.value[0..1] == '//'
+        @images << 'http:' + i.value
+      elsif i.value =~ /http/
+        @images << i.value
+      end
     end
-    @all << @imgs
   end
 end
+
