@@ -71,7 +71,7 @@ def find_repeating(number)
   end
   repeats.delete_if { |_, v| v < 2 }
   at_exit { puts 0 if repeats.empty? }; exit if repeats.empty?
-  repeats.each_pair { |k, v| print "#{k.join.to_i}:#{v} " }; print "\n"
+  repeats.each_pair { |k, v| print "#{k.join}:#{v} " }; print "\n"
 end
 
 find_repeating(ARGV[0])
