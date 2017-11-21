@@ -1,3 +1,5 @@
+#!/usr/local/bin/ruby
+
 # Daily Programmer #341 Easy
 # Repeating Numbers
 # November 21, 2017
@@ -60,18 +62,19 @@
 # Feel free to consider '0x' as a two digit number, or '0xy' as a three
 # digit number. If you don't want to consider it like that, it's fine.
 
-def find_repeating(number)
-  repeats = Hash.new(0)
-  n = 2
-  while n < number.to_s.length
-    number.to_s.chars.each_cons(n) do |slice|
-      repeats[slice] += 1
+def find_repeating(input)
+  Hash.new(0).tap do |repeats|
+    2.upto(input.length) do |n|
+      input.chars.each_cons(n) do |slice|
+        repeats[slice.join] += 1
+      end
     end
-    n += 1
   end
-  repeats.delete_if { |_, v| v < 2 }
-  at_exit { puts 0 if repeats.empty? }; exit if repeats.empty?
-  repeats.each_pair { |k, v| print "#{k.join}:#{v} " }; print "\n"
 end
 
-find_repeating(ARGV[0])
+cache = find_repeating(ARGV[0])
+
+at_exit do
+  cache.each_pair { |k, v| print "#{k}:#{v} " if v > 1 }
+  puts cache.values.all? { |v| v < 2 } ? 0 : ''
+end
