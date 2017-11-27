@@ -53,7 +53,9 @@
 # 11111011110111011	11110111:2 1111011:2 1110111:2 111101:2 111011:3
 # 110111:2 11110:2 11101:3 11011:3 10111:2 1111:3 1110:3 1101:3 1011:3
 # 0111:2 111:6 110:3 101:3 011:3 11:10 10:3 01:3
+
 # 98778912332145	0
+
 # 124489903108444899	44899:2 4489:2 4899:2 448:2 489:2 899:2 44:3 48:2
 # 89:2 99:2
 
@@ -63,13 +65,13 @@
 # digit number. If you don't want to consider it like that, it's fine.
 
 def find_repeating(input)
-  Hash.new(0).tap do |repeats|
-    2.upto(input.length) do |n|
-      input.chars.each_cons(n) do |slice|
-        repeats[slice.join] += 1
-      end
+  repeats = Hash.new(0)
+  2.upto(input.length) do |n|
+    input.chars.each_cons(n) do |slice|
+      repeats[slice.join] += 1
     end
   end
+  repeats
 end
 
 cache = find_repeating(ARGV[0])
