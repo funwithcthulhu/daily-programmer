@@ -30,26 +30,31 @@ class Song
   end
 
   def get_measures
+    dice = Dice.new
     @possibilities.each_index do |i|
-      @measures << @possibilities[i][Dice.new.roll + Dice.new.roll]
+      @measures << @possibilities[i][dice.roll + dice.roll - 2]
     end
   end
 
   def make_song
     @measures.each do |measure|
       l = measure * 3
-      temp = @source.select { |m| m[1].to_i >= l && m[1].to_i < (l + 3) }
+      temp = @source.select { |m| m[1].to_i >= (l-3) && m[1].to_i < l }
       temp.each { |a| @song << a }
     end
   end
 
   def realign_measures
-    j = 0
-    temp = @song[0][1] = '0'
+    j = 0.0
+    temp = @song[0][1]
     @song.size.times do |i|
       if @song[i][1] != temp
         temp = @song[i][1]
-        j += 1
+        j += if @song[i][1] =~ /(\.5)/ || j.to_s =~ /(\.5)/
+               0.5
+             else
+               1
+             end
       end
       @song[i][1] = j.to_s
     end
@@ -67,10 +72,7 @@ end
 # overkill dice object for creating random numbers
 class Dice
   attr_reader :value
-  def initialize
-    @value = 1 + rand(5)
-  end
-
+  
   def roll
     @value = 1 + rand(5)
   end
