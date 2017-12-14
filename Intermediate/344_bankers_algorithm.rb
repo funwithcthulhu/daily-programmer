@@ -46,37 +46,33 @@ Have the program tell you if there is no way to complete the algorithm.
 # Brute force implementation of banker's algorithm
 class Scheduler
   def initialize
-    @resources = BProcess.new([0, 0, 0, 0, 0, 0], 'RESOURCE')
-    @processes = []
-    @combinations = []
-    @valid_schedules = []
+    @start = nil
+    @schedules = []
     read_data
-    find_combinations
-    alloc_resources
-    map_valid_schedules
-    print_output
+    make_schedules
+    mark_invalid_schedules
+    print_valid_schedules
   end
 
   def read_data
     i = 0
     DATA.each_line do |line|
       l = line.split(/\s+/).map(&:to_i)
-      @resources.maxm = l if l.size < 5
+      @start = l if l.size < 5
       next unless l.size > 3
-      @processes << BProcess.new(l, i)
-      i += 1
+      @schedules << BProcess.new(l, i) && i += 1
     end
   end
 
-  def find_combinations
-    @combinations = @processes.permutation(@processes.size).to_a
-    @combinations.map! { |list| [list, @resources.maxm.dup] }
+  def make_schedules
+    @schedules = @schedules.permutation(@schedules.size).to_a
+    @schedules.map! { |list| [list, @start.dup] }
   end
 
-  def alloc_resources
-    @combinations.each do |list|
+  def mark_invalid_schedules
+    @schedules.each do |list|
       list[0].each do |process|
-        invalid = ->(n) { process.maxm[n] - process.allocation[n] > list[1][n] }
+        invalid = ->(n) { process.maxavail[n] - process.allocation[n] > list[1][n] }
         add = ->(n) { list[1][n] += process.allocation[n] }
         list << 'mark' if invalid[0] || invalid[1] || invalid[2]
         add[0] && add[1] && add[2]
@@ -84,23 +80,20 @@ class Scheduler
     end
   end
 
-  def map_valid_schedules
-    @combinations.delete_if { |list| list.size > 2 }
-    @combinations.each { |list| @valid_schedules << list[0].map(&:order) }
-    @valid_schedules.map! { |list| list.map! { |p| "P#{p}" } }
-  end
-
-  def print_output
-    puts 'No complete valid schedules available' if @valid_schedules.empty?
-    @valid_schedules.each { |sch| puts sch.join(', ') }
+  def print_valid_schedules
+    @schedules.delete_if { |list| list.size > 2 }
+    puts 'No complete valid schedules available' if @schedules.empty?
+    @schedules.map! { |list| list[0].map! { |p| "P#{p.order}" } }
+    @schedules.each { |sch| puts sch.join(', ') }
   end
 end
 
+# Process object
 class BProcess
-  attr_accessor :allocation, :maxm, :order, :curr
+  attr_accessor :allocation, :maxavail, :order, :curr
   def initialize(array, order = nil)
     @allocation = array[0..2]
-    @maxm = array[3..5]
+    @maxavail = array[3..5]
     @order = order
   end
 end
