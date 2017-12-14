@@ -1,3 +1,4 @@
+#!/Users/thomasboeding/.rubies/ruby-2.4.2/bin/ruby
 # frozen_string_literal: true
 
 '''
@@ -12,7 +13,7 @@ have the maximum resources in each slot.
 
 Ex:
 Process	Allocation	Max	Available
-    A B C	A B C	A B C
+A B C	A B C	A B C
 P0	0 1 0	7 5 3	3 3 2
 P1	2 0 0	3 2 2	
 P2	3 0 2	9 0 2	
@@ -58,9 +59,9 @@ class Scheduler
     i = 0
     DATA.each_line do |line|
       l = line.split(/\s+/).map(&:to_i)
-      @start = l if l.size < 5
-      next unless l.size > 3
-      @schedules << BProcess.new(l, i) && i += 1
+      @start = l if i.zero?
+      @schedules << BProcess.new(l, i) if i > 0
+      i += 1
     end
   end
 
@@ -72,10 +73,10 @@ class Scheduler
   def mark_invalid_schedules
     @schedules.each do |list|
       list[0].each do |process|
-        invalid = ->(n) { process.maxavail[n] - process.allocation[n] > list[1][n] }
-        add = ->(n) { list[1][n] += process.allocation[n] }
-        list << 'mark' if invalid[0] || invalid[1] || invalid[2]
-        add[0] && add[1] && add[2]
+        process.maxavail.size.times do |i|
+          list << 'mark' if process.maxavail[i] - process.allocation[i] > list[1][i]
+          list[1][i] += process.allocation[i]
+        end
       end
     end
   end
@@ -92,8 +93,9 @@ end
 class BProcess
   attr_accessor :allocation, :maxavail, :order, :curr
   def initialize(array, order = nil)
-    @allocation = array[0..2]
-    @maxavail = array[3..5]
+    size = array.size / 2
+    @allocation = array[0..(size - 1)]
+    @maxavail = array[size..(size * 2)]
     @order = order
   end
 end
@@ -101,9 +103,10 @@ end
 Scheduler.new
 
 __END__
-3 3 2
-0 1 0 7 5 3
-2 0 0 3 2 2
-3 0 2 9 0 2
-2 1 1 2 2 2
-0 0 2 4 3 3
+6 5 2 6 7
+0 2 0 7 5 3 2 3 1 5
+2 1 0 3 2 2 1 7 1 0
+3 0 2 9 0 5 5 3 4 1
+2 4 1 2 4 2 5 3 2 3
+0 0 2 4 3 3 4 4 5 4
+2 4 1 7 4 8 1 1 4 0
