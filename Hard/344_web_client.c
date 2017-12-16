@@ -73,7 +73,6 @@ Support authentication
 Support arbitrary additional headers or overwriting headers
 */
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -84,11 +83,10 @@ Support arbitrary additional headers or overwriting headers
 #include <netinet/in.h>
 #include <arpa/inet.h> 
 
-#define HTTP_GET_MSG "GET %s HTTP/1.1\r\nHost:%s\r\n\r\n"
+#define HTTP_GET_MSG "GET /%s HTTP/1.1\r\nHost:%s\r\n\r\n"
 
 int client(char *host, char *loc, char *port);
-char* getLoc(char *url);
-void formatURL(char *url);
+void formatURL(char *url, char **host_return, char **loc_return);
 
 int main(int argc, char* argv[])
 {
@@ -96,18 +94,10 @@ int main(int argc, char* argv[])
 		fprintf(stderr, "Usage: %s <url/location> <port>\n", argv[0]);
 		return 1;
 	}
-	int length = strlen(argv[1]) + 1;
-	char *url = calloc(length, sizeof(char));
-	strcpy(url, argv[1]);
-	formatURL(url);
-
-	char *loc = calloc(length, sizeof(char));
-	strcpy(loc, argv[1]);
-	loc = getLoc(loc);
-
-	int n = client(url, loc, argv[2]);
-	free(url);
-
+	char *loc;
+	char *host;
+	formatURL(argv[1], &host, &loc);
+	int n = client(host, loc, argv[2]);
 	return n;
 }
 
@@ -122,7 +112,6 @@ int client(char *host, char *loc, char *port)
 	hints.ai_socktype = SOCK_STREAM;
 
 	struct addrinfo *serverinfo;
-	memset(&serverinfo, 0, sizeof(serverinfo));
 	int status = getaddrinfo(host, port, &hints, &serverinfo);
 	int sockt = socket(serverinfo->ai_family,
 					   serverinfo->ai_socktype,
@@ -139,30 +128,20 @@ int client(char *host, char *loc, char *port)
 	return 0;
 }
 
-char* getLoc(char *url)
+void formatURL(char *url, char **host_return, char **loc_return)
 {
-	char *pt;
-	pt = url;
-	int length = strlen(pt);
-	int i = 0;
-	pt += length - 1;
-    while (*pt!= '/') {
-		pt--;
-		i++;
-		if (i == length) {
-			pt = "/";
-			break;
-		}
-	}   
-	return pt;
-}
+	char *host;
+	char *loc;
+	if (strncmp(url, "http://", 7) == 0)
+		host = url + 7;
+	else
+		host = url;
 
-void formatURL(char *url)
-{
-	char *pt;
-	pt = url;
-	while (*pt != '/') {
-		pt++;
-	}
-	*pt = '\0';
+	if ((loc = strchr(host, '/')))
+        *loc++ = '\0';
+	else
+        loc = "";
+
+	*host_return = host;
+	*loc_return = loc;
 }
