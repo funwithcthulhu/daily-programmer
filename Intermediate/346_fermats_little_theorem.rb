@@ -76,7 +76,7 @@ def fermat(p, c)
   while 1 - (1 / 2**t) < c
     a = rand(2...p)
     j = jacobi(a, p)
-    return false if a.to_bn.mod_exp(((p - 1)/2), p) != j % p
+    return false if j.zero? || a.to_bn.mod_exp(((p - 1)/2), p) != j % p
     t += 1
   end
   true
