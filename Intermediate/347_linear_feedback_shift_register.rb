@@ -94,3 +94,23 @@ lfsr([0,2], 'XOR', '001', 7)
 lfsr([0,2], 'XNOR', '001', 7)
 lfsr([1,2,3,7], 'XOR', '00000001', 16)
 lfsr([1,5,6,31], 'XOR', '00000000000000000000000000000001', 16)
+
+
+# Alternate version which accepts a single string as input
+
+def lfsr(input, t = 0)
+  input_array = input.split(/\s+/)
+  steps = input_array[3].to_i
+  return if t > steps
+  taps, fb, val = input_array[0], input_array[1], input_array[2].chars.map(&:to_i)
+  puts "#{t} #{val.join}"
+  val.unshift(feedback(val, eval(taps), fb)).pop
+  lfsr("#{taps} #{fb} #{val.join} #{steps}", t + 1)
+end
+
+def feedback(val, taps, fb)
+  sel = ->(val, taps) { val.select.with_index { |v, idx| taps.include?(idx) } }
+  return sel[val, taps].reduce { |t, v| t ^ v } if fb == 'XOR'
+  return sel[val, taps].reduce { |t, v| 1 - (t ^ v) } if fb == 'XNOR'
+  raise ArgumentError.new('Invalid feedback')
+end
