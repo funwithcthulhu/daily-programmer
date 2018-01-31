@@ -89,7 +89,7 @@ if __FILE__ == $0
   puts "#{challenge1[0]} months to domination with #{challenge1[1]} dead rabbits"
   puts "#{challenge2[0]} months to domination with #{challenge2[1]} dead rabbits"
 
-  tot = 1000000000
+  tot = 2000000000
   tot *= 10 until rabbit_problem(2, 4, tot)[1] > 0
   bonus = rabbit_problem(2, 4, tot)
   puts "#{bonus[0]} months until #{bonus[1]} dead rabbits appear"
