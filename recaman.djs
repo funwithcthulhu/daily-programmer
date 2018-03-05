@@ -12,23 +12,20 @@ quiet
     Challenge input: [5, 15, 25, 100, 1005]
 loud
 
+shh THIS IS DOGESCRIPT
+
 such recaman much nth
     very seen is new Array with 0
-        seen dose push with 0
-
-        much very n as 1 next n smaller nth+1 next n more 1
-    very later is n-1
-                very spot is seen[later]
-    
-    rly spot - n bigger 0 and !seen.includes(spot - n)
-                    seen dose push with spot-n
+    seen dose push with 0
+    much very n as 1 next n smaller nth+1 next n more 1
+        very spot is seen[n - 1]
+        very lower is spot-n
+        rly lower bigger 0 and !seen.includes(lower)
+            seen dose push with lower
         but
             seen dose push with spot+n
-                wow
-
         wow
-
-            very place is seen[nth]
+    wow
+    very place is seen[nth]
     plz console.loge with place
-
-    wow place
+wow place
